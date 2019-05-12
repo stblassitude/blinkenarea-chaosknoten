@@ -797,7 +797,7 @@ Attribute("PCB::grid::unit" "mm")
 Attribute("PCB::grid::size" "0.5000mm")
 Via[157.48mil 157.48mil 98.43mil 60.00mil 104.43mil 98.43mil "" "hole"]
 Via[60.9999mm 157.48mil 98.43mil 60.00mil 104.43mil 98.43mil "" "hole"]
-Via[61.9999mm 45.9999mm 98.43mil 60.00mil 104.43mil 98.43mil "" "hole"]
+Via[61.0000mm 46.0000mm 98.43mil 60.00mil 104.43mil 98.43mil "" "hole"]
 Via[157.48mil 45.9999mm 98.43mil 60.00mil 104.43mil 98.43mil "" "hole"]
 Via[12.0000mm 40.0000mm 36.00mil 60.00mil 0.0000 18.00mil "" ""]
 Via[15.0000mm 37.0000mm 36.00mil 60.00mil 0.0000 18.00mil "" ""]
@@ -2159,6 +2159,10 @@ Layer(7 "signal3")
 )
 Layer(8 "milling")
 (
+	Arc[3.0000mm 3.0000mm 3.0000mm 3.0000mm 6.00mil 60.00mil 0 -90 ""]
+	Arc[3.0000mm 47.0000mm 3.0000mm 3.0000mm 6.00mil 60.00mil 0 90 ""]
+	Arc[62.0000mm 47.0000mm 3.0000mm 3.0000mm 6.00mil 60.00mil 90 90 ""]
+	Arc[62.0000mm 3.0000mm 3.0000mm 3.0000mm 6.00mil 60.00mil 180 90 ""]
 )
 Layer(9 "silk")
 (
