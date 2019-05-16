@@ -918,6 +918,11 @@ Via[12.5000mm 30.5000mm 36.00mil 60.00mil 0.0000 18.00mil "" ""]
 Via[13.5000mm 30.5000mm 36.00mil 60.00mil 0.0000 18.00mil "" ""]
 Via[9.5000mm 30.5000mm 36.00mil 60.00mil 0.0000 18.00mil "" ""]
 Via[8.5000mm 30.5000mm 36.00mil 60.00mil 0.0000 18.00mil "" ""]
+Via[26.5000mm 38.5000mm 36.00mil 60.00mil 0.0000 18.00mil "" ""]
+Via[26.5000mm 33.5000mm 36.00mil 60.00mil 0.0000 18.00mil "" ""]
+Via[26.5000mm 43.5000mm 36.00mil 60.00mil 0.0000 18.00mil "" ""]
+Via[31.5000mm 38.5000mm 36.00mil 60.00mil 0.0000 18.00mil "" ""]
+Via[21.5000mm 38.5000mm 36.00mil 60.00mil 0.0000 18.00mil "" ""]
 
 Element["" "APL3015" "D20" "APL3015" 196.85mil 19.0000mm 1.5000mm -0.4999mm 0 100 ""]
 (
@@ -1873,6 +1878,7 @@ Layer(1 "component")
 	Line[10.5000mm 5.0000mm 10.5000mm 6.0001mm 12.00mil 60.00mil ""]
 	Line[10.5000mm 6.0001mm 10.5000mm 6.0001mm 12.00mil 60.00mil ""]
 	Line[2.0000mm 9.0000mm 3.0000mm 8.0000mm 12.00mil 60.00mil ""]
+	Text[35.5000mm 7.5000mm 0 100 "TOP" "clearline"]
 )
 Layer(2 "solder")
 (
@@ -2141,6 +2147,9 @@ Layer(2 "solder")
 	Line[3.5000mm 7.5000mm 3.0000mm 8.0000mm 12.00mil 60.00mil ""]
 	Line[2.0000mm 23.0000mm 2.0000mm 8.0000mm 12.00mil 60.00mil ""]
 	Line[9.5000mm 30.5000mm 8.5000mm 30.5000mm 36.00mil 60.00mil ""]
+	Text[35.5000mm 9.0000mm 0 100 "BOT" "clearline,onsolder"]
+	Text[40.0000mm 48.0000mm 0 100 "Chaosknoten 0.1.0" "clearline,onsolder"]
+	Text[7.0000mm 3.0000mm 0 100 "by stefan@blinkenarea.org" "clearline,onsolder"]
 )
 Layer(3 "GND")
 (
