@@ -360,7 +360,7 @@ N 2400 4500 1200 4500 4
 N 5200 4900 7100 4900 4
 T 4500 14500 9 20 1 0 0 0 5
 Chaosknoten - animated logo board
-version 0.1 date 2019-05-09
+version 1.0 date 2019-05-19
 Copyright (C) 2019 Stefan Schuermans <stefan@blinkenarea.org>
 Copyleft: GNU public license - http://www.gnu.org/copyleft/gpl.html
 a BlinkenArea project - http://www.blinkenarea.org/
