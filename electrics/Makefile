@@ -40,7 +40,7 @@ gbrs: $(addsuffix .gerber.zip,$(NAMES))
 	  | sed 's/ 6.00mil / 1.00mil /g' > $*.gerber/tmp/$<
 	$(PCB) -x gerber --gerberfile $*.gerber/tmp/$* $*.gerber/tmp/$<
 	mv $*.gerber/tmp/$*.group7.gbr $*.gerber/$*.milling.gbr
-	rm $(foreach X,group7 toppaste bottompaste,$*.gerber/$*.$X.gbr)
+	rm $(foreach X,group7,$*.gerber/$*.$X.gbr)
 	rm -rf $*.gerber/tmp
 	zip -r $@ $*.gerber
 
