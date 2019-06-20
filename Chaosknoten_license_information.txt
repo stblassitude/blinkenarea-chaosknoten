@@ -1,0 +1,6 @@
+The "Chaosknoten" logo has been created by Wau Holland for the Chaos
+Computer Club e.V. (http://www.ccc.de).  It is now owned by Wau Holland
+Stiftung (http://www.wauland.de/).
+Wau Holland Stiftung has given BlinkenArea the permission to use the logo for
+this electronics kit upon condition the hardware design and the software is
+published under a free license (via email on 2019-05-16).
