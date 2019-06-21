@@ -1,24 +1,19 @@
 NAME := Chaosknoten
 PAPER := a4
-PHOTOS := battery_holder.jpg capacitor.jpg Chaosknoten_back.jpg \
-          Chaosknoten_front.jpg led.jpg microcontroller.jpg resistor.jpg \
-          switch.jpg transistor.jpg
-SYMBOLS := battery_holder.svg capacitor.svg Chaosknoten_back.svg \
-           Chaosknoten_front.svg led.svg microcontroller.svg resistor.svg \
-           schematic.svg smd_solder_done.svg smd_solder_pads.svg \
-           smd_solder_part.svg smd_solder_start.svg smd_solder_tin.svg \
-           switch.svg transistor.svg
+PHOTOS := battery_holder capacitor Chaosknoten_back Chaosknoten_front led \
+          microcontroller resistor switch transistor
+SYMBOLS := battery_holder capacitor Chaosknoten_back Chaosknoten_front led \
+           microcontroller resistor schematic smd_solder_done smd_solder_pads \
+           smd_solder_part smd_solder_start smd_solder_tin switch transistor
 
 CONVERT := convert
 INKSCAPE := inkscape
-LATEX := latex
-BIBTEX := bibtex
-DVIPS := dvips
-PS2PDF := ps2pdf
-PDFVIEWER := acroread
+PDFLATEX := pdflatex
 
-IMAGES := $(addprefix photos/,$(PHOTOS)) $(addprefix symbols/,$(SYMBOLS))
-IMAGES_EPS := $(addsuffix .eps,$(IMAGES))
+IMAGES := $(addsuffix .jpg,$(addprefix photos/,$(PHOTOS))) \
+          $(addsuffix .svg,$(addprefix symbols/,$(SYMBOLS)))
+IMAGES_PDF := $(addsuffix .pdf,$(addprefix photos/,$(PHOTOS))) \
+              $(addsuffix .pdf,$(addprefix symbols/,$(SYMBOLS)))
 
 SUFFIXES :=
 
@@ -26,28 +21,18 @@ SUFFIXES :=
 .SUFFIXES:
 .SECONDARY:
 
-all: $(NAME).dvi $(NAME).ps $(NAME).pdf
-
-show: $(NAME).pdf
-	$(PDFVIEWER) $<
+all: $(NAME).pdf
 
 clean:
-	rm -f $(NAME).d $(NAME).log $(NAME).out $(NAME).dvi $(NAME).ps \
-	      $(NAME).pdf $(IMAGES_EPS)
+	rm -f $(NAME).aux $(NAME).log $(NAME).out $(NAME).pdf $(IMAGES_PDF)
 
-%.jpg.eps: %.jpg
+%.pdf: %.jpg
 	$(CONVERT) $< $@
 
-%.svg.eps: %.svg
-	$(INKSCAPE) -f $< -E $@
+%.pdf: %.svg
+	$(INKSCAPE) -f $< -A $@
 
-%.dvi: %.tex $(IMAGES_EPS)
-	yes x | $(LATEX) $< || { rm -f $@; false; }
-	yes x | $(LATEX) $< || { rm -f $@; false; }
-
-%.ps: %.dvi
-	$(DVIPS) -t$(PAPER) -Ppdf -o $@ $<
-
-%.pdf: %.ps
-	$(PS2PDF) $< $@
+%.pdf: %.tex $(IMAGES_PDF)
+	yes x | $(PDFLATEX) $< || { rm -f $@; false; }
+	yes x | $(PDFLATEX) $< || { rm -f $@; false; }
 

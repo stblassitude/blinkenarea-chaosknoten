@@ -6,7 +6,11 @@
 \usepackage{fullpage}
 \usepackage[left=1cm,right=1cm,top=1cm,bottom=1cm,nohead,nofoot]{geometry}
 \usepackage{graphicx}
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
+
+\pdfinfo{
+  /Title (Chaosknoten)
+}
 
 \newcommand{\vtopimage}[2]{
   \setlength\fboxsep{1pt}
@@ -14,8 +18,8 @@
   \fbox{\includegraphics[width=#1]{#2}}
 }
 \newcommand{\partimage}[1]{\vtopimage{.1\textwidth}{#1}}
-\newcommand{\partphoto}[1]{\partimage{photos/#1.jpg.eps}}
-\newcommand{\partsymbol}[1]{\partimage{symbols/#1.svg.eps}}
+\newcommand{\partphoto}[1]{\partimage{photos/#1.pdf}}
+\newcommand{\partsymbol}[1]{\partimage{symbols/#1.pdf}}
 
 \begin{document}
 
@@ -24,7 +28,7 @@
 \title{Chaosknoten - animated logo board 1.0 \\
        https://wiki.blinkenarea.org/index.php/Chaosknoten}
 
-\author{Stefan Schürmans, BlinkenArea \\
+\author{Stefan SchÃ¼rmans, BlinkenArea \\
         stefan@blinkenarea.org}
 
 \maketitle
@@ -39,8 +43,8 @@
   \\
   42 & \partphoto{led} & \partsymbol{led} &
     LED: klein, teilweise transparent. Die Polung ist zu beachten.
-    Die beiden grünen Punkte am linken Rand kennzeichnen die Kathode.
-    Im Symbol sind sie als zusätzliche schwarze Punkte dargestellt. &
+    Die beiden grÃ¼nen Punkte am linken Rand kennzeichnen die Kathode.
+    Im Symbol sind sie als zusÃ¤tzliche schwarze Punkte dargestellt. &
     LED: small, partly transparent. Pay attention to the polarity.
     The two green dots at the left side mark the cathode.
     In the symbol, they are shown as additional black dots. \newline \\
@@ -62,7 +66,7 @@
     In the symbol, pin 1 is indicated by a half circle at the left. \newline \\
   \\
   1 & \partphoto{microcontroller} & \partsymbol{microcontroller} &
-    Mikrokontroller: größeres IC, 20 Pins. Die Polung ist zu beachten.
+    Mikrokontroller: grÃ¶ÃŸeres IC, 20 Pins. Die Polung ist zu beachten.
     Der kleine Punkt in der oberen linken Ecke markiert Pin 1.
     Im Symbol wird Pin 1 durch einen Halbkreis am oberen Rand gekennzeichnet. &
     Microcontroller: bigger IC, 20 pins. Pay attention to the polarity.
@@ -70,7 +74,7 @@
     In the symbol, pin 1 is indicated by a half circle at the top. \newline \\
   \\
   1 & \partphoto{switch} & \partsymbol{switch} &
-    Schalter: schwarz, zwei kleine weiße Hebel, 4 Pins. Pin 1 ist dort, wo
+    Schalter: schwarz, zwei kleine weiÃŸe Hebel, 4 Pins. Pin 1 ist dort, wo
     die Zahl 1 aufgedruckt ist. Im Symbol ist Pin 1 mit einem kleinen Kreis
     gekennzeichet. &
     Switch: black, two small white levers, 4 pins. Pin 1 is where the
@@ -79,7 +83,7 @@
   \\
   1 & \partphoto{battery_holder} & \partsymbol{battery_holder} &
     Batteriehalter: silbern, aus Blech gefertigt, Ausrichtung beachten.
-    Auf das runde Pad sollte eine sehr dünne Schicht Lötzinn
+    Auf das runde Pad sollte eine sehr dÃ¼nne Schicht LÃ¶tzinn
     aufgetragen werden. &
     Battery Holder: silver, made from sheet metal,
     pay attention to orientation.
@@ -90,12 +94,12 @@
 
 \begin{tabular}{m{.47\textwidth}m{.47\textwidth}}
   Die schematische Darstellung der Platine zeigt, an welche Position und in
-  welcher Ausrichtung die Bauteile eingelötet werden müssen. &
+  welcher Ausrichtung die Bauteile eingelÃ¶tet werden mÃ¼ssen. &
   The schemtic drawing of the board shows to what positions and in which
   orientation the parts have to be soldered. \\
-  Es wird empfohlen, die Bauteile in der Reihenfolge ihrer Erwähnung in
-  Abschnitt~\ref{sec:parts} aufzulöten.
-  Für eine kurze Einführung in das SMD-Löten, siehe
+  Es wird empfohlen, die Bauteile in der Reihenfolge ihrer ErwÃ¤hnung in
+  Abschnitt~\ref{sec:parts} aufzulÃ¶ten.
+  FÃ¼r eine kurze EinfÃ¼hrung in das SMD-LÃ¶ten, siehe
   Abschnitt~\ref{sec_smd_solder}. &
   It is recommended to solder the parts in the order they are mentioned
   in section~\ref{sec:parts}.
@@ -106,15 +110,15 @@
 \subsection{Vorderseite / Front Side}
 
 \begin{tabular}{cc}
-  \vtopimage{.43\textwidth}{symbols/Chaosknoten_front.svg.eps}
-  \vtopimage{.43\textwidth}{photos/Chaosknoten_front.jpg.eps}
+  \vtopimage{.43\textwidth}{symbols/Chaosknoten_front.pdf}
+  \vtopimage{.43\textwidth}{photos/Chaosknoten_front.pdf}
 \end{tabular}
 
-\subsection{Rückseite / Back Side}
+\subsection{RÃ¼ckseite / Back Side}
 
 \begin{tabular}{cc}
-  \vtopimage{.43\textwidth}{symbols/Chaosknoten_back.svg.eps}
-  \vtopimage{.43\textwidth}{photos/Chaosknoten_back.jpg.eps}
+  \vtopimage{.43\textwidth}{symbols/Chaosknoten_back.pdf}
+  \vtopimage{.43\textwidth}{photos/Chaosknoten_back.pdf}
 \end{tabular}
 
 \subsection{Schalter / Switches}
@@ -125,7 +129,7 @@
   \\
   1 & ON  & eingeschaltet & turned on \\
     & off & ausgeschaltet & turned off \\
-  2 & ON  & automatisch zur nächsten Animation wechseln &
+  2 & ON  & automatisch zur nÃ¤chsten Animation wechseln &
             switch to next animation automatically \\
     & off & aktuelle Animation weiter anzeigen &
             keep showing current animation \\
@@ -135,16 +139,16 @@
 
 \begin{tabular}{m{.47\textwidth}m{.47\textwidth}}
   Der Mikrokontroller im Bausatz ist bereits programmiert.
-  Daher kann die Platine nach Abschluss der Lötarbeiten direkt eingeschaltet
+  Daher kann die Platine nach Abschluss der LÃ¶tarbeiten direkt eingeschaltet
   werden. &
   The microcontroller in the kit is already programmed.
   Therefore, the board can be turned on directly after completing the
   sorldering.
   \\
   Wenn ein noch nicht programmierter Mikrokontroller eingesetzt wird,
-  kann die Programmierung über die Debug-Kontakte in der linken unteren Ecke
-  der Rückseite durchgeführt werden.
-  Dazu wird ein geeignetes Programmiergerät und ein Adapter benötigt.
+  kann die Programmierung Ã¼ber die Debug-Kontakte in der linken unteren Ecke
+  der RÃ¼ckseite durchgefÃ¼hrt werden.
+  Dazu wird ein geeignetes ProgrammiergerÃ¤t und ein Adapter benÃ¶tigt.
   Die Pinbelegung des Adapters kann dem Schaltplan
   (siehe Abschnitt~\ref{sec:schematic}) entnommen werden. &
   If a non-programmed microncontroller is used, it can be programmed using
@@ -159,16 +163,16 @@
 \subsection{Schaltplan / Schematic}
 \label{sec:schematic}
 
-\includegraphics[width=\textwidth]{symbols/schematic.svg.eps}
+\includegraphics[width=\textwidth]{symbols/schematic.pdf}
 
-\subsection{Stückliste / Part List}
+\subsection{StÃ¼ckliste / Part List}
 
 \begin{tabular}{rlllll}
   \# & Beschreibung          & Description           & Bauform / Footprint & Wert / Value  & Symbol       \\
   \hline
    1 & Platine               & printed circuit board & 65mm x 50mm         & Chaosknoten   & -            \\
    1 & Batteriehalter        & battery holder        & SMD                 & -             & B1           \\
-   1 & Batterie              & battery               & 20mm x 3.2mm        & CR2032        & für / for B1 \\
+   1 & Batterie              & battery               & 20mm x 3.2mm        & CR2032        & fÃ¼r / for B1 \\
    1 & 2-pol. DIP-Schalter   & 2 pol DIP switch      & SMD                 & -             & S1           \\
    1 & Widerstand            & resistor              & SMD 0805            & 10kOhm        & R1           \\
    1 & Kondensator           & capacitor             & SMD 0805            & 100nF         & C1           \\
@@ -177,34 +181,34 @@
   42 & orange LED            & orange LED            & SMD                 & APL3015       & D1 - D42     \\
 \end{tabular}
 
-\subsection{SMD-Löten / SMD Soldering}
+\subsection{SMD-LÃ¶ten / SMD Soldering}
 \label{sec_smd_solder}
 
 \begin{tabular}{rm{.1\textwidth}m{.37\textwidth}m{.37\textwidth}}
   1 & \partsymbol{smd_solder_start} &
-    Das abgebildete SMD-Bauteil soll auf die Platine gelötet werden
+    Das abgebildete SMD-Bauteil soll auf die Platine gelÃ¶tet werden
     (Ansicht von der Seite). &
     The pictured SMD part shall be soldered to the board
     (viewn from the side). \\
   \\
   2 & \partsymbol{smd_solder_pads} &
-    Zunächst wird das Bauteil noch einmal zur Seite gelegt. &
+    ZunÃ¤chst wird das Bauteil noch einmal zur Seite gelegt. &
     First, the part is put aside. \newline \\
   \\
   3 & \partsymbol{smd_solder_tin} &
-    Mit Lötkolben und Lötzinn wird nun ein einziges Pad verzinnt.
-    Falls es viele Pads gibt, wählt man ein Pad in einer Ecke.
+    Mit LÃ¶tkolben und LÃ¶tzinn wird nun ein einziges Pad verzinnt.
+    Falls es viele Pads gibt, wÃ¤hlt man ein Pad in einer Ecke.
     Die anderen Pads bleiben erst einmal frei. &
     Using soldering iron and solder, some solder is put onto a single pad.
     If there are many pads, a pad in a corner is selected.
     The other pads stay empty for now. \\
   \\
   4 & \partsymbol{smd_solder_part} &
-    Mit dem Lötkolben wird nun das Zinn auf dem Pad wieder erhitzt.
+    Mit dem LÃ¶tkolben wird nun das Zinn auf dem Pad wieder erhitzt.
     Gleichzeitig wird mit einer Pinzette in der anderen Hand
     das Bauteil an die vorgesehene Position gesetzt.
-    Der Lötkolben wird von der Lötstelle entfernt.
-    Wenn das Lötzinn erstarrt ist, wird das Bauteil losgelassen. &
+    Der LÃ¶tkolben wird von der LÃ¶tstelle entfernt.
+    Wenn das LÃ¶tzinn erstarrt ist, wird das Bauteil losgelassen. &
     The solder on the pad is heated again with the soldering iron.
     At the same time, the part is placed to its designated position
     using some tweezers and the other hand.
@@ -212,11 +216,11 @@
     After the solder has solidified, the part is released. \newline \\
   \\
   5 & \partsymbol{smd_solder_part} &
-    Nun wird die Position des Bauteils noch einmal überprüft.
+    Nun wird die Position des Bauteils noch einmal Ã¼berprÃ¼ft.
     Insbesondere ist es wichtig, dass alle anderen Pins auf den vorgesehenen
     Pads liegen.
     Falls nicht, kann das Bauteil wie in Schritt 3 noch einmal neu
-    positioniert werden, indem man die einzige Lötstelle noch einmal erhitzt. &
+    positioniert werden, indem man die einzige LÃ¶tstelle noch einmal erhitzt. &
     Now the position of the part is verified.
     It is especially important that all other pins are exactly located at the
     designated pads.
@@ -225,11 +229,11 @@
   \\
   6 & \partsymbol{smd_solder_done} &
     Wenn das Bauteil korrekt positioniert ist, werden alle anderen Pins mit
-    Hilfe von Lötkolben und Lötzinn angelötet.
-    Falls das Bauteil viele Pins hat, lötet man als zweites den
-    Pin in der Ecke an, die dem zuerst angelöteten Pin gegenüber liegt.
-    Danach prüft man die Position des Bauteils noch einmal,
-    bevor man die übrigen Pins anlötet. &
+    Hilfe von LÃ¶tkolben und LÃ¶tzinn angelÃ¶tet.
+    Falls das Bauteil viele Pins hat, lÃ¶tet man als zweites den
+    Pin in der Ecke an, die dem zuerst angelÃ¶teten Pin gegenÃ¼ber liegt.
+    Danach prÃ¼ft man die Position des Bauteils noch einmal,
+    bevor man die Ã¼brigen Pins anlÃ¶tet. &
     If the part is positioned correctly, all other pins are soldered using
     soldering iron and solder.
     In case the part has many pins, the pin in the corner opposite of the
@@ -241,12 +245,12 @@
 \section{Information}
 
 \begin{tabular}{m{.47\textwidth}m{.47\textwidth}}
-  Dieser Bausatz enthält Kleinteile und ist für kleine Kinder nicht geeignet. &
+  Dieser Bausatz enthÃ¤lt Kleinteile und ist fÃ¼r kleine Kinder nicht geeignet. &
   This kit contains small parts and is not suitable for small children. \\
 \end{tabular}
 
 \center{
-  Copyright (C) 2019 Stefan Schürmans, BlinkenArea
+  Copyright (C) 2019 Stefan SchÃ¼rmans, BlinkenArea
 
   Copyleft: GNU public license - https://www.gnu.org/copyleft/gpl.html
 }
