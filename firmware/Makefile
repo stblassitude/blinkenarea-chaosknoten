@@ -39,12 +39,12 @@ movies/%.inc: movies/%.bbm
 	./bbm2Chaosknoten.py -i $< -f $@
 
 movie_funcs.inc: $(MOVIE_FUNC_TMPL) $(MOVIES_INC) Makefile
-	for N in $(notdir $(MOVIES_INC:.inc=)); do \
+	for N in $(sort $(notdir $(MOVIES_INC:.inc=))); do \
 	  sed "s/NAME/$$N/g" $(MOVIE_FUNC_TMPL); \
 	done >$@
 
 movie_tab.inc: $(MOVIES_INC) Makefile
-	for N in $(notdir $(MOVIES_INC:.inc=)); do \
+	for N in $(sort $(notdir $(MOVIES_INC:.inc=))); do \
 	  echo "        .dw     ANIM_MOVIE_$$N"; \
 	  echo "        .dw     $${N##*x}"; \
 	done >$@
