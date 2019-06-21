@@ -1,0 +1,7 @@
+ANIM_MOVIE_NAME_DATA:
+.INCLUDE        "movies/NAME.inc"
+ANIM_MOVIE_NAME:
+        ldi     ZL,low(2 * ANIM_MOVIE_NAME_DATA)
+        ldi     ZH,high(2 * ANIM_MOVIE_NAME_DATA)
+        rjmp    ANIM_MOVIE
+

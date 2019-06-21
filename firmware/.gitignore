@@ -2,3 +2,5 @@
 /*.hex
 /*.lst
 /*.obj
+/movie_funcs.inc
+/movie_tab.inc

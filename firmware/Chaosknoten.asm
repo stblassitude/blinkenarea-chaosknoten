@@ -580,6 +580,43 @@ ANIM_BW_WORM_LOOP:
 
 
 
+; play animation
+; input: Z = pointer to movie data
+; output: -
+; changes: X, Z, FRAME, CNT, DATA, TMP, TMP2
+ANIM_MOVIE:
+; get duration in 6ms steps, zero means end of movie
+        lpm     TMP,Z+
+        cpi     TMP,0
+        breq    ANIM_MOVIE_END
+; extract frame to frame buffer
+        ldi     XL,low(FRAME)           ; ptr to pixel data
+                                        ;   XH not there on ATtiny2313
+ANIM_MOVIE_FRAME_LOOP:
+        lpm     DATA,Z+                 ; get two pixels
+        mov     TMP2,DATA               ; write first pixel
+        swap    TMP2
+        andi    TMP2,0x0F
+        st      X+,TMP2
+        andi    DATA,0x0F               ; write second pixel
+        st      X+,DATA
+        cpi     XL,low(FRAME)+42        ; bottom of loop
+                                        ;   XH not there on ATtiny2313
+        brlo    ANIM_MOVIE_FRAME_LOOP
+; show frame
+        rcall   OUT_FRAME_TIME          ; frame time is already in TMP
+; next frame
+        rjmp    ANIM_MOVIE
+; end of movie
+ANIM_MOVIE_END:
+        ret
+
+
+
+.INCLUDE        "movie_funcs.inc"
+
+
+
 ; read mode from switch and (store animation number)
 ; input: MODE = old mode, CNT = animation number
 ; output: MODE = new mode
@@ -618,6 +655,7 @@ MODE_READ_NOT_0_TO_1:
 
 ; animation table: animation function, iteration count (<= 255)
 ANIM_TAB:
+.INCLUDE        "movie_tab.inc"
         .dw     ANIM_BLINK
         .dw     3
         .dw     ANIM_WORM
