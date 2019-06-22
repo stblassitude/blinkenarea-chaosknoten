@@ -35,7 +35,7 @@ SUFFIXES :=
 
 all: $(NAME).hex
 
-movies/%.inc: movies/%.bbm
+movies/%.inc: movies/%.bbm bbm2Chaosknoten.py
 	./bbm2Chaosknoten.py -i $< -f $@
 
 movie_funcs.inc: $(MOVIE_FUNC_TMPL) $(MOVIES_INC) Makefile
