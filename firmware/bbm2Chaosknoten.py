@@ -52,7 +52,7 @@ class Movie(object):
             return self.duration, data
 
         def to_firmware_data(self):
-            duration = (self.duration + 5) // 10
+            duration = (self.duration + 3) // 6
             if duration < 1:
                 duration = 1
             if duration > 255:
