@@ -8,6 +8,8 @@ import sys
 class Movie(object):
     class Frame(object):
 
+        # offsets (y * width(66) + x) of the pixels whose green value
+        # is taken from the *.bbm frames for the LEDs
         LED_COORDS = [
             408, 414, 420, 468, 492, 677, 684, 863, 945, 951, 957, 963, 971,
             975, 1034, 1209, 1215, 1221, 1227, 1259, 1299, 1304, 1373, 1469,
@@ -15,6 +17,9 @@ class Movie(object):
             2106, 2163, 2225, 2365, 2559, 2620, 2956
         ]
 
+        # offsets (y * width(66) + x) of the pixels whose color is set to
+        # the LED brightness in the *.bbm frames on output
+        # (multiple (-> list) per LED)
         LED_COORDS_OUT = [
             [408, 407, 409], [414, 413, 415], [420, 419, 421], [468, 533, 403],
             [492, 425, 559], [677, 610, 744], [684, 617, 751], [863, 797, 929],
@@ -36,12 +41,15 @@ class Movie(object):
             self.leds = len(self.LED_COORDS) * [0]
 
         def from_frame_data(self, duration, data):
+            """parse frame from duration and *.bbm pixel data"""
             self.duration = duration
             for i in range(len(self.LED_COORDS)):
                 ledno = self.LED_COORDS[i]
                 self.leds[i] = data[ledno * 3 + 1]
 
         def to_frame_data(self):
+            """convert frame to *.bbm frame data,
+               return duation and pixel data"""
             pixels = 51 * 66 * [0, 0, 255]
             for i in range(len(self.LED_COORDS_OUT)):
                 for ledno in self.LED_COORDS_OUT[i]:
@@ -52,21 +60,55 @@ class Movie(object):
             return self.duration, data
 
         def to_firmware_data(self):
+            """convert a frame to firmware data"""
+            # duration: in 6ms steps, 12 bits
             duration = (self.duration + 3) // 6
             if duration < 1:
                 duration = 1
-            if duration > 255:
-                duration = 255
-            fw_data = [duration]
+            if duration > 0x3FF:
+                duration = 0x3FF
+            # use shorter encoding
+            plain = self._fw_pix_data_plain()
+            rle = self._fw_pix_data_rle()
+            if len(rle) < len(plain):
+                code = 0x10 # rle compressed
+                data = rle
+            else:
+                code = 0x00 # plain
+                data = plain
+            # encode code and duration at begin of data
+            dur_h = (duration >> 8) & 0x0F
+            dur_l = duration & 0xFF
+            return [code | dur_h, dur_l] + data
+
+        def _fw_pix_data_plain(self):
+            """return pixel data, plain, no compression"""
+            data = []
             half = None
             for led in self.leds:
                 val = (led >> 4) & 0x0F
                 if half is None:
                     half = val
                 else:
-                    fw_data.append(half << 4 | val)
+                    data.append(half << 4 | val)
                     half = None
-            return fw_data
+            return data
+
+        def _fw_pix_data_rle(self):
+            """return pixel data, compressed using run length encoding"""
+            data = []
+            val = (self.leds[0] >> 4) & 0x0F
+            cnt = 0
+            for led in self.leds:
+                ledval = (led >> 4) & 0x0F
+                if val == ledval and cnt < 0x10:  # same value -> count
+                    cnt += 1
+                else:
+                    data.append((cnt - 1) << 4 | val)  # append RLE item
+                    val = ledval
+                    cnt = 1
+            data.append((cnt - 1) << 4 | val)  # last RLE item
+            return data
 
     def __init__(self):
         self.frames = []
@@ -77,6 +119,7 @@ class Movie(object):
         self.frame_hdr = struct.Struct("!H")
 
     def read_bbm(self, filename):
+        """read movie from *.bbm file"""
         try:
             with open(filename, "rb") as f:
                 # main header
@@ -119,6 +162,7 @@ class Movie(object):
             return False
 
     def write_bbm(self, filename):
+        """write movie as *.bbm file"""
         with open(filename, "wb") as f:
             # main header
             f.write(self.main_hdr.pack(0x23542666, 51, 66, 3, 255))
@@ -136,13 +180,41 @@ class Movie(object):
                 f.write(data)
 
     def write_firmware(self, filename):
+        """write movie as firmware (assembly include file)"""
+        # convert all frames to firware data
+        fw_frames = []
+        fw_len = 0
+        for frame in self.frames:
+            fw_data = frame.to_firmware_data()
+            # search for identical frame before
+            id_len = 0
+            for id_frame in fw_frames:
+                if id_frame == fw_data and id_frame[0] & 0xE0 == 0x00:
+                    # identical frame found (and code is 0x00 or 0x10)
+                    # -> replace data with back reference
+                    back = fw_len - id_len + 2
+                    if back <= 0x3FF:
+                        back_h = (back >> 8) & 0x0F
+                        back_l = back & 0xFF
+                        fw_data = [0x20 | back_h, back_l]
+                        print("DEBUG back", fw_data)
+                        break
+                id_len += len(id_frame)
+            # append frame to list
+            fw_frames.append(fw_data)
+            fw_len += len(fw_data)
+        # build firmware data
+        fw_data = []
+        for fw_frame in fw_frames:
+            fw_data += fw_frame
+        fw_data.append(0xF0) # end marker
+        if len(fw_data) & 1 != 0:
+            fw_data.append(0) # ensure even length
+        # write firmware data as assembly
         with open(filename, "w") as f:
-            for frame in self.frames:
-                fw_data = frame.to_firmware_data()
-                for i in range(0, len(fw_data), 8):
-                    vals = ["0x{:02X}".format(v) for v in fw_data[i:i + 8]]
-                    print("        .db     {:s}".format(",".join(vals)), file=f)
-            print("        .db     0,0", file=f)
+            for i in range(0, len(fw_data), 8):
+                vals = ["0x{:02X}".format(v) for v in fw_data[i:i + 8]]
+                print("        .db     {:s}".format(",".join(vals)), file=f)
 
 
 def parse_arguments():

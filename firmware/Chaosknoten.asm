@@ -579,36 +579,173 @@ ANIM_BW_WORM_LOOP:
         ret
 
 
+; movie data format
+;   movie = frame ... frame end
+;   frame = 0x0_ ... -> plain frame
+;           0x1_ ... -> rle (run length encoded) frame
+;           0x2_ ... -> back reference
+;   plain frame = duration_high (0x00..0x0F), duration_low (0x00..0xFF),
+;                 21 * ( pixel (0x00..0x0F)) << 4 | pixel (0x00..0x0F) )
+;   rle frame = 0x10 | duration_high (0x00..0x0F), duration_low (0x00..0xFF),
+;               rle entry, ..., rle_entry (until 42 pixels are encoded)
+;   rle_entry = repeat (0x00..0x0F) << 4 | value (0x00..0x0F)
+;               meaning: repeat + 1 pixels of value
+;   back reference = 0x20 | back_high (0x00..0x0F), back_low (0x00..0xFF)
+;                    meaning: read frame from earlier position,
+;                             frame data start = pos after back ref - back
+;   end = 0xF_
+
+
+
+; play animation - process code and following section
+; input: Z = pointer to movie data
+;        TMP2 = 0 -> initial call, 1 -> nested call
+; output: Z = pointer to behind processed movie data (only for initial call)
+;         TMP = 0 -> go on, 1 -> end
+; changes: X, FRAME, TMP, DATA, CNT
+;          Z (only for nested call)
+ANIM_MOVIE_CODE:
+; get 4 bit code and 12 bit value
+        lpm     DATA,Z+
+        lpm     CNT,Z+
+        mov     TMP,DATA
+        andi    TMP,0xF0                ; 4 bit code (shifted left 4) is in TMP
+        andi    DATA,0x0F               ; 12 bit value is in DATA:CNT
+; interpret code
+        cpi     TMP,0x20
+        brsh    ANIM_MOVIE_CODE_2_TO_F
+        cpi     TMP,0x00
+        breq    ANIM_MOVIE_CODE_0
+        rjmp    ANIM_MOVIE_CODE_1
+ANIM_MOVIE_CODE_2_TO_F:
+        cpi     TMP,0x20
+        breq    ANIM_MOVIE_CODE_2
+; unknown code -> end
+        ldi     TMP,1                   ; end
+        ret
+
+; plain frame
+ANIM_MOVIE_CODE_0:
+; save 12 bit value
+        push    DATA
+        push    CNT
+; extract frame to frame buffer
+        ldi     XL,low(FRAME)           ; ptr to pixel data
+                                        ;   XH not there on ATtiny2313
+ANIM_MOVIE_CODE_FRAME_PLAIN_LOOP:
+        lpm     DATA,Z+                 ; get two pixels
+        mov     TMP,DATA                ; write first pixel
+        swap    TMP
+        andi    TMP,0x0F
+        st      X+,TMP
+        andi    DATA,0x0F               ; write second pixel
+        st      X+,DATA
+        cpi     XL,low(FRAME)+42        ; bottom of loop
+                                        ;   XH not there on ATtiny2313
+        brlo    ANIM_MOVIE_CODE_FRAME_PLAIN_LOOP
+; restore 12 bit value
+        pop     CNT
+        pop     DATA
+; show frame
+        rjmp    ANIM_MOVIE_CODE_SHOW
+
+; rle frame
+ANIM_MOVIE_CODE_1:
+; save 12 bit value
+        push    DATA
+        push    CNT
+; extract frame to frame buffer
+        ldi     XL,low(FRAME)           ; ptr to pixel data
+                                        ;   XH not there on ATtiny2313
+        ldi     CNT,0                   ; no pixel data yet
+ANIM_MOVIE_CODE_FRAME_RLE_LOOP:
+; load new pixel data if none available
+        cpi     CNT,0
+        brne    ANIM_MOVIE_CODE_FRAME_RLE_DATA_OK
+        lpm     DATA,Z+                 ; get repeat count and pixel value
+        mov     CNT,DATA
+        andi    DATA,0x0F               ; pixel value in DATA
+        swap    CNT
+        andi    CNT,0x0F                ; repeat count in CNT
+        inc     CNT                     ; use for repeat count + 1 pixels
+ANIM_MOVIE_CODE_FRAME_RLE_DATA_OK:
+; write pixel data to frame
+        st      X+,DATA
+; count down available pixel data
+        dec     CNT
+; bottom of loop
+        cpi     XL,low(FRAME)+42        ;   XH not there on ATtiny2313
+        brlo    ANIM_MOVIE_CODE_FRAME_RLE_LOOP
+; restore 12 bit value
+        pop     CNT
+        pop     DATA
+; show frame
+        rjmp    ANIM_MOVIE_CODE_SHOW
+
+; back reference
+ANIM_MOVIE_CODE_2:
+; check if in nested call
+        cpi     TMP2,0
+        brne    ANIM_MOVIE_CODE_2_NESTED
+; save pointer to frame data
+        push    ZL
+        push    ZH
+; go back by 12 bit value in DATA:CNT
+        sub     ZL,CNT
+        sbc     ZH,DATA
+; recursive call
+        ldi     TMP2,1                  ; nested call
+        rcall   ANIM_MOVIE_CODE
+; restore pointer to frame data
+        pop     ZH
+        pop     ZL
+; done
+        ldi     TMP,0                   ; continue
+        ret
+
+; back reference - nested call
+ANIM_MOVIE_CODE_2_NESTED:
+; go back by 12 bit value in DATA:CNT
+        sub     ZL,CNT
+        sbc     ZH,DATA
+; recursive tail call (no need to save Z on nested call)
+        ldi     TMP2,1                  ; nested call
+        rjmp    ANIM_MOVIE_CODE
+
+; show frame
+ANIM_MOVIE_CODE_SHOW:
+; high part of frame time
+        cpi     DATA,0
+        breq    ANIM_MOVIE_CODE_SHOW_HIGH_DONE
+        ldi     TMP,0                   ; means 256 frames times
+        rcall   OUT_FRAME_TIME
+        dec     DATA
+        rjmp    ANIM_MOVIE_CODE_SHOW
+ANIM_MOVIE_CODE_SHOW_HIGH_DONE:
+; low part of frame time
+        cpi     CNT,0
+        breq    ANIM_MOVIE_CODE_SHOW_LOW_DONE
+        mov     TMP,CNT
+        rcall   OUT_FRAME_TIME
+ANIM_MOVIE_CODE_SHOW_LOW_DONE:
+; done
+        ldi     TMP,0                   ; continue
+        ret
+
+
 
 ; play animation
 ; input: Z = pointer to movie data
 ; output: -
 ; changes: X, Z, FRAME, CNT, DATA, TMP, TMP2
 ANIM_MOVIE:
-; get duration in 6ms steps, zero means end of movie
-        lpm     TMP,Z+
+; process code block
+        ldi     TMP2,0                  ; initial call
+        rcall   ANIM_MOVIE_CODE
+; continue if not yet end
         cpi     TMP,0
-        breq    ANIM_MOVIE_END
-; extract frame to frame buffer
-        ldi     XL,low(FRAME)           ; ptr to pixel data
-                                        ;   XH not there on ATtiny2313
-ANIM_MOVIE_FRAME_LOOP:
-        lpm     DATA,Z+                 ; get two pixels
-        mov     TMP2,DATA               ; write first pixel
-        swap    TMP2
-        andi    TMP2,0x0F
-        st      X+,TMP2
-        andi    DATA,0x0F               ; write second pixel
-        st      X+,DATA
-        cpi     XL,low(FRAME)+42        ; bottom of loop
-                                        ;   XH not there on ATtiny2313
-        brlo    ANIM_MOVIE_FRAME_LOOP
-; show frame
-        rcall   OUT_FRAME_TIME          ; frame time is already in TMP
-; next frame
-        rjmp    ANIM_MOVIE
-; end of movie
-ANIM_MOVIE_END:
+        breq    ANIM_MOVIE
+; done
         ret
 
 
@@ -673,7 +810,6 @@ ANIM_TAB:
         .dw     ANIM_RUN
         .dw     3
 ANIM_TAB_END:
-
 
 
 ; main program
