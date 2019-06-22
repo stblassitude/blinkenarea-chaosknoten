@@ -197,7 +197,6 @@ class Movie(object):
                         back_h = (back >> 8) & 0x0F
                         back_l = back & 0xFF
                         fw_data = [0x20 | back_h, back_l]
-                        print("DEBUG back", fw_data)
                         break
                 id_len += len(id_frame)
             # append frame to list
