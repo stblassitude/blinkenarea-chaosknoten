@@ -1,4 +1,4 @@
-NAME := Chaosknoten
+NAMES := Chaosknoten ChaosknotenOnePage
 PAPER := a4
 PHOTOS := battery_holder capacitor Chaosknoten_back Chaosknoten_front led \
           microcontroller resistor switch transistor
@@ -21,16 +21,19 @@ SUFFIXES :=
 .SUFFIXES:
 .SECONDARY:
 
-all: $(NAME).pdf
+all: $(addsuffix .pdf,$(NAMES))
 
 clean:
-	rm -f $(NAME).aux $(NAME).log $(NAME).out $(NAME).pdf $(IMAGES_PDF)
+	rm -f $(foreach N,$(NAMES),$(foreach E,aux log out pdf,$N.$E))
+	rm -f $(IMAGES_PDF)
 
 %.pdf: %.jpg
 	$(CONVERT) $< $@
 
 %.pdf: %.svg
 	$(INKSCAPE) -f $< -A $@
+
+ChaosknotenOnePage.pdf: Chaosknoten.pdf
 
 %.pdf: %.tex $(IMAGES_PDF)
 	yes x | $(PDFLATEX) $< || { rm -f $@; false; }
